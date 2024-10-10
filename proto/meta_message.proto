@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package message;
+//option go_package ="github.com/adoggie/ccsuites;message";
+option go_package = "../message;message";
+
+// IncrementOrderBookInfo 表示增量订单簿信息
+message MetaMessage {
+  uint32  magic = 1;
+  int32  version = 2;
+  int64 type = 3;  // 消息类型
+  uint32 size = 4;  // 消息大小
+  uint64 code = 5;
+  bytes  data = 6;
+}
+
+
+message UserAuth{
+  string user = 1;// 用户名
+  bytes  rands = 2 ;
+  bytes digest = 3 ;
+}
+
+message Result{
+  bool  ok = 1;
+  string reason = 2;
+  bytes  data = 3;
+  string action = 4 ; // 操作名称
+}
+
+message QuoteStart{
+  int64  start = 1; // 开始时间 utc timestamp, 0 : 从最新的行情开始
+  int64  end = 2; // 结束时间，并不包含
+}
+
+message QuoteSeek{
+  int64  start = 1; // 开始时间 utc timestamp, 0 : 从最新的行情开始
+}

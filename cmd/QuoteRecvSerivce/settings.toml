@@ -1,0 +1,149 @@
+thunder_id = "qrs1"
+service_type = "quote_recv_service"
+
+fanout_servers = ["tcp://127.0.0.1:15540", "tcp://127.0.0.1:15541"]
+
+recv_depth_enable = false
+recv_orbinc_enable = false
+recv_orbinc_reconnect_timeout = 120 # seconds 连接超时接收不到消息则重连
+recv_trade_enable = true
+recv_trade_reconnect_timeout = 120 # seconds 连接超时接收不到消息则重连
+
+recv_snapshot_enable = false
+recv_kline_enable = false
+recv_aggtrade_enable = false
+
+
+data_compressed = false
+data_encode_type = 'gob' # pb
+#data_encode_type = 'pb' # pb
+
+pos_mx_addr = "tcp://172.16.10.169:15553"
+pos_sub_mode = 'remote'
+pos_sub_enable = true
+pos_sub_forward = true # 是否需要推送
+
+debug_print_trade = false
+
+
+# bind or connect
+#  reorder if last_price < ask[order_price_place_index] *( 1 - n% ) or last_price > bid[order_price_place_index] *(1+n%)
+order_price_place_index = 0 #  ask[0] / bid[0]
+
+#报单价格区间,[ask - bid] 区间价格偏移
+# sell order , ask[0] - (ask[0]-bid[0]) * R
+# buy order , bid[0] + (ask[0] - bid[0]) * R
+order_price_place_offset = 0.5  # R
+# place价格超过对方盘口价格之后偏移多少tick ， buy( ask1 - offset ),  sell( bid1 + offset )
+order_price_place_tick_offset = 0
+order_fill_timeout = 5 # 成交超时
+
+# 撤单偏移 百分比
+# sell order , new_place_price < placed_price and   abs(new_place_price - placed_price) / placed_price >= N*tickSize
+# buy order , new_place_price > placed_price and abs(new_place_price - placed_price) / placed_price >= N*tickSize
+order_cancel_deviation = 5 # N ticks
+cancel_order_on_start = true
+log_level = "trace"
+logfile = "drs.log"
+log_dir = './bnthunder-logs/'
+# redis_server = { addr="172.16.30.21:6379",password="",db=0 }
+redis_server = { addr = "127.0.0.1:6379", password = "", db = 0 }
+
+# position signal log
+pssig_dir ="./bnthunder-logs/siglog"
+pssig_log_enable = false    # 是否
+
+report_status_interval = 5
+
+#not trade symbols
+symbol_blacklist = []
+#
+sigpos_multiplier = 1
+
+#account = "testfuture"
+account = "2k"
+userstream_keep_interval = 60       # 保持ws的用户数据流
+message_pub_chan = "thunder_message_chan"
+
+#trading_symbols =[ "EOSUSDT","XRPUSDT","ETHUSDT"]
+trading_symbols =[ "ETHUSDT"]
+#trading_symbols =[ "BNTUSDT"]
+#trading_symbols =[ "XRPUSDT"]
+#trading_symbols =[ "BNTUSDT"]
+cancel_order_onstart = true
+
+[depth_client_manager]
+max_symbol_num_per_conn = 50
+reconnect_wait_time = 5
+depth_level = 10
+
+[trade_client_manager]
+max_symbol_num_per_conn = 50
+reconnect_wait_time = 5
+
+[orb_inc_client]
+max_symbol_num_per_conn = 50
+reconnect_wait_time = 5
+
+[kline_manager]
+max_symbol_num_per_conn = 50
+reconnect_wait_time = 5
+interval = "1m"
+
+[aggtrade_manager]
+max_symbol_num_per_conn = 50
+reconnect_wait_time = 5
+
+
+[[accounts]]
+# 测试future账号
+name = "testfuture"
+api_key = "d1bad7feff0735057820a4178edd2202d9ecd8e1d0f900a5efab14d1a372b7d2"
+secret_key = "98401c9c24e3621b675446b4ac60f5ea135650dab82ffe8dd1c4830af43b77"
+testnet = true
+
+[[accounts]]
+# 空资产
+name = "2k"
+api_key = "6ePSQaTC2H8hKXvkMVrpK5KG7xVDOAKbc7frJQXtQoOyqeMVLX8lzDwjc0TTS02t"
+secret_key = "tw6LpYxrwkwkCruKSESFGWIypQN1HOHpi03NJcMBo"
+testnet = false
+
+
+[[symbols]]
+name = "XRPUSDT"
+enable = true
+limit_position = 0
+timeout = 30
+order_type = "LIMIT" # MARKET
+ticks = 1
+leverage = 1    # 开仓杠杆
+
+[ordermanager]
+order_price_offset = 1.5
+#"_order_price_offset": "报价偏移 ask - bid 之间",
+tape_price_deviation = 0.001
+#"_tape_price_deviation": "盘口移动偏移作为撤单依据",
+checkOrderReturnTimer = 0
+#"_checkOrderReturnTimer": "报单超时检查定时器，0：关闭超时检查",
+order_price_offset_limit = false
+#"_order_price_offset_limit": "价格偏移检查",
+#"trade_log_file": "trade_log_list.txt",
+task_max_lifetime_limit = 600
+#"_task_max_lifetime_limit": "最大任务时长
+
+[snapshot_manager]
+timer_interval_secs = 15 # seconds 快照间隔 3分钟
+request_wait = 1000 # milliseconds 请求等待时间
+on_reconnect = true # 重连触发
+on_timer = true #定时触发
+on_sequence_check = true    #序列号检查触发
+task_queue_size = 10
+depth_limit = 1000
+
+
+[qmon_manager]
+enable = true
+report_interval = 5  #seconds
+report_dest = "tcp://127.0.0.1:1608"
+auth_key="123456"

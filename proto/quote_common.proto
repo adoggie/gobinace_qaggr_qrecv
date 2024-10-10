@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+// update 0.2 2024.08.30
+
+package message;
+option go_package = "../message;message";
+import "quote_period.proto";
+
+// access  http://172.16.30.30:10083/issues/984
+
+// IncrementOrderBookInfo 表示增量订单簿信息
+message DepthInfo {
+  int64 timestamp = 1;  // 时间戳，表示该信息的事件时间
+  int64 trans_ts = 2;   // 交易时间戳
+  int64 first_update_id = 3 ;// 第一个更新的订单簿ID
+  int64 last_update_id = 4; // 最后更新的订单簿ID
+  int64 prev_last_update_id = 5; // 上一个订单簿ID
+  repeated PriceLevel bids = 6; // 买单列表
+  repeated PriceLevel asks = 7; // 卖单列表
+}
+
+message KlineInfo  {
+  int64 timestamp = 1;  // 时间
+  int64 start_time = 2;
+  int64 end_time = 3;
+  string symbol = 4;  // 交易对
+  string interval = 5; // K线周期
+  int64 first_trade_id = 6; // 第一个交易ID
+  int64 last_trade_id = 7; // 最后一个交易ID
+  double open = 8; // 开盘价
+  double close = 9; // 收盘价
+  double high = 10; // 最高价
+  double low = 11; // 最低价
+  double volume = 12; // 交易量
+  int64 trade_num = 13; // 交易笔数
+  bool is_final = 14; // 是否是最后一条
+  double quote_volume = 15; // 成交额
+  double active_buy_volume = 16; // 主动买量
+  double active_buy_quote_volume = 17; // 主动买额
+}
+
+message AggTradeInfo {
+  int64 timestamp = 1;  // 时间
+  string symbol = 2;  // 交易对
+  int64 aggregate_trade_id = 3; // 聚合交易ID
+  double price = 4; // 价格
+  double quantity = 5; // 数量
+  int64 first_trade_id = 6; // 第一个交易ID
+  int64 last_trade_id = 7; // 最后一个交易ID
+  int64 trade_time = 8; // 交易时间
+  bool maker = 9; // 是否是maker
+}
+

@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+// update 0.2 2024.08.30
+
+package message;
+option go_package = "../message;message";
+
+// access  http://172.16.30.30:10083/issues/984
+
+// IncrementOrderBookInfo 表示增量订单簿信息
+message IncrementOrderBookInfo {
+  int64 timestamp = 1;  // 时间戳，表示该信息的事件时间
+  int64 trans_ts = 2;   // 交易时间戳
+  int64 first_update_id = 3 ;// 第一个更新的订单簿ID
+  int64 last_update_id = 4; // 最后更新的订单簿ID
+  int64 prev_last_update_id = 5; // 上一个订单簿ID
+  repeated PriceLevel bids = 6; // 买单列表
+  repeated PriceLevel asks = 7; // 卖单列表
+}
+
+// TradeInfo 表示交易信息
+message TradeInfo {
+  int64 timestamp = 1;  // 时间戳，表示交易发生的时间
+  int64 trade_id = 2; // 交易ID
+  double price = 3;      // 交易价格
+  double qty = 4;     // 交易数量
+  int64 buyer_order_id = 5; // 买方订单ID
+  int64 seller_order_id = 6; // 卖方订单ID
+  int64 trade_ts = 7;  // 交易时间戳
+  bool is_buyer_maker = 8; // 买方是否是maker
+  bool place_holder = 9; // 占位符
+}
+
+// PriceLevel 表示价格和数量
+message PriceLevel{
+  double price = 1;      // 价格
+  double amount = 2;     // 数量
+}
+
+// SnapShotInfo 表示订单簿的快照信息
+message SnapShotInfo{
+  int64 last_update_id = 1; // 最后更新的订单簿ID
+  int64 timestamp = 2;  // 时间戳，表示该信息的事件时间
+  int64 trade_ts = 3;  // 交易时间戳
+  repeated PriceLevel bids = 4; // 买单列表
+  repeated PriceLevel asks = 5; // 卖单列表
+}
+
+// SymbolInfo 表示某个交易对的信息
+message SymbolInfo {
+  string symbol = 1;                          // 交易对符号，例如 "BTCUSDT"
+  repeated TradeInfo trades = 2;              // 该交易对的交易信息列表
+  repeated IncrementOrderBookInfo incs = 3;   // 该交易对的增量订单簿信息列表
+  repeated SnapShotInfo snaps = 4;                      // 该交易对的快照信息
+}
+
+// PeriodMessage 表示一个3s时间段内的市场数据汇总
+message PeriodMessage {
+  int64 period = 1;                   // 数据所属的时间段,period 3s一次
+  int64 ts = 2;                       // 消息生成的时间戳
+  int64 post_ts = 3;                  // 消息发布到kafka的时间戳
+  string poster_id = 4;               // 发布者服务的唯一标识符
+  repeated SymbolInfo symbol_infos = 5; // 包含多个交易对信息的列表
+}
